@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "771773391918",
+    "project_id": "roboworks-118e3",
+    "storage_bucket": "roboworks-118e3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771773391918:android:903fe1d831c812e40cebbf",
+        "android_client_info": {
+          "package_name": "com.quantonly.robo_works"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "771773391918-ruo5a5ojbrd84g0je0olpcprib4qcihf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDp5Ws2ItrLSGjVwAwLxkqz837WGQyFNb0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "771773391918-ruo5a5ojbrd84g0je0olpcprib4qcihf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
