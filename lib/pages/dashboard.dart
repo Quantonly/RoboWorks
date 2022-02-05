@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:robo_works/models/user_data.dart';
 import 'package:robo_works/services/authentication.dart';
+import 'package:robo_works/services/database/user_service.dart';
+import 'package:robo_works/globals/data.dart' as data;
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({Key? key}) : super(key: key);
@@ -12,6 +16,21 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      getUserData();
+    });
+    super.initState();
+  }
+
+  getUserData() async {
+    final firebaseUser = Provider.of<User>(context, listen: false);
+    UserData userData = await UserService(uid: firebaseUser.uid).getUserData();
+    data.displayName = userData.displayName;
+    data.projects = userData.projects;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
