@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:robo_works/models/robot.dart';
+import 'package:robo_works/pages/robot_details.dart';
+import 'package:robo_works/services/database/robot_service.dart';
 
 class RobotsPage extends StatefulWidget {
   final String projectId;
@@ -9,6 +13,19 @@ class RobotsPage extends StatefulWidget {
 }
 
 class _RobotsPageState extends State<RobotsPage> {
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _fetchRobots();
+    });
+    super.initState();
+  }
+
+  Future<List<Robot>> _fetchRobots() async {
+    List<Robot> robots = await RobotService(projectId: widget.projectId).getRobots();
+    return robots;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +62,52 @@ class _RobotsPageState extends State<RobotsPage> {
                     color: Colors.black,
                   ),
                 ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: SizedBox(
+              height: 500,
+              child: FutureBuilder(
+                future: _fetchRobots(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        Robot robot = snapshot.data[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeft,
+                                child: RobotDetailsPage(robot: robot),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              Text(
+                                robot.name,
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 28),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
               ),
             ),
           ),
