@@ -38,109 +38,107 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Colors.black87,
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Center(
-                  child: Row(
-                    children: <Widget>[
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: SizedBox(
-                          height: 70,
-                          width: MediaQuery.of(context).size.width,
-                        ),
+      backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Center(
+                child: Row(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: SizedBox(
+                        height: 70,
+                        width: MediaQuery.of(context).size.width,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+                child: const Center(
+                  child: Text(
+                    'Sign In',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
-                Container(
-                  transform: Matrix4.translationValues(0.0, -30.0, 0.0),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Form(
+                key: _formKey,
+                child: Column(children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                    ),
+                    child: TextFormField(
+                      controller: emailController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: style.getTextFieldDecoration('Email'),
+                      validator: MultiValidator([
+                        RequiredValidator(errorText: 'Invalid email'),
+                        EmailValidator(errorText: 'Invalid email'),
+                      ]),
+                      keyboardType: TextInputType.emailAddress,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    child: TextFormField(
+                      controller: passwordController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      decoration: style.getTextFieldDecoration('Password'),
+                      validator: RequiredValidator(
+                          errorText: 'Password is required'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      obscureText: true,
+                    ),
+                  ),
+                ]),
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (_formKey.currentState!.validate()) {
+                    login('signin');
+                  }
+                },
+                child: Container(
+                  height: 50,
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(50),
+                    color: Colors.white,
+                  ),
                   child: const Center(
                     child: Text(
                       'Sign In',
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Form(
-                  key: _formKey,
-                  child: Column(children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: TextFormField(
-                        controller: emailController,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: style.getTextFieldDecoration('Email'),
-                        validator: MultiValidator([
-                          RequiredValidator(errorText: 'Invalid email'),
-                          EmailValidator(errorText: 'Invalid email'),
-                        ]),
-                        keyboardType: TextInputType.emailAddress,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      child: TextFormField(
-                        controller: passwordController,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        decoration: style.getTextFieldDecoration('Password'),
-                        validator: RequiredValidator(
-                            errorText: 'Password is required'),
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                        obscureText: true,
-                      ),
-                    ),
-                  ]),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {
-                      login('signin');
-                    }
-                  },
-                  child: Container(
-                    height: 50,
-                    margin: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: Colors.white,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
+                        color: Colors.black,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
