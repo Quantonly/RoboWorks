@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:robo_works/models/user_data.dart';
+import 'package:robo_works/models/project.dart';
 import 'package:robo_works/services/authentication.dart';
+import 'package:robo_works/services/database/project_service.dart';
 import 'package:robo_works/services/database/user_service.dart';
 import 'package:robo_works/globals/data.dart' as data;
 
@@ -19,16 +21,24 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   void initState() {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      getUserData();
+      _fetchUserData();
     });
     super.initState();
   }
 
-  getUserData() async {
+  Future<List<Project>> _fetchUserData() async {
     final firebaseUser = Provider.of<User>(context, listen: false);
     UserData userData = await UserService(uid: firebaseUser.uid).getUserData();
     data.displayName = userData.displayName;
-    data.projects = userData.projects;
+    data.grantedProjects = userData.projects;
+    List<Project> projects = await _fetchProjects();
+    return projects;
+  }
+
+  Future<List<Project>> _fetchProjects() async {
+    List<Project> projects = await ProjectService().getGrantedProjects();
+    data.projects = projects;
+    return projects;
   }
 
   @override
@@ -40,7 +50,13 @@ class _DashboardPageState extends State<DashboardPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Dashboard'),
+            const SizedBox(height: 150,),
+            const Text(
+              'Dashboard',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
             GestureDetector(
               onTap: () {
                 context.read<AuthenticationService>().signOut();
@@ -62,6 +78,36 @@ class _DashboardPageState extends State<DashboardPage> {
                       color: Colors.black,
                     ),
                   ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: SizedBox(
+                height: 500,
+                child: FutureBuilder(
+                  future: _fetchUserData(),
+                  builder: (context, AsyncSnapshot snapshot) {
+                    if (!snapshot.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else {
+                      return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          Project project = snapshot.data[index];
+                          return Column(
+                            children: [
+                              Text(
+                                project.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
               ),
             ),
