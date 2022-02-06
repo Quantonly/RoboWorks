@@ -8,13 +8,11 @@ class SignOutDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: const EdgeInsets.all(20),
       title: const Text('Sign out'),
-      content: SingleChildScrollView(
-        child: ListBody(
-          children: const <Widget>[
-            Text('Are you sure you want to sign out?'),
-          ],
-        ),
+      content: const SizedBox(
+        width: double.maxFinite,
+        child: Text('Are you sure you want to sign out?'),
       ),
       actions: <Widget>[
         TextButton(
