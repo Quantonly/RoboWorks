@@ -26,10 +26,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 1',
       'Setup & Commissioning',
       0,
-      const Icon(
-        Icons.build,
-        color: Color.fromRGBO(223, 223, 223, 1),
-      ),
+      Icons.build,
       Container(),
     ),
     ExpansionItem(
@@ -37,10 +34,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 2',
       'Safety',
       0,
-      const Icon(
-        Icons.health_and_safety,
-        color: Color.fromRGBO(223, 223, 223, 1),
-      ),
+      Icons.health_and_safety,
       Container(),
     ),
     ExpansionItem(
@@ -48,10 +42,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 3',
       'Path Verification',
       0,
-      const Icon(
-        Icons.alt_route,
-        color: Color.fromRGBO(223, 223, 223, 1),
-      ),
+      Icons.alt_route,
       Container(),
     ),
     ExpansionItem(
@@ -59,10 +50,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 4',
       'Automatic Build',
       0,
-      const Icon(
-        Icons.autorenew,
-        color: Color.fromRGBO(223, 223, 223, 1),
-      ),
+      Icons.autorenew,
       Container(),
     ),
     ExpansionItem(
@@ -70,10 +58,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 5',
       'Documentation',
       0,
-      const Icon(
-        Icons.document_scanner,
-        color: Color.fromRGBO(223, 223, 223, 1),
-      ),
+      Icons.document_scanner,
       Container(),
     ),
   ];
@@ -198,6 +183,16 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                               });
                             },
                             children: items.map((ExpansionItem item) {
+                              Color titleColor =
+                                  const Color.fromRGBO(223, 223, 223, 1);
+                              Color subtitleColor =
+                                  const Color.fromRGBO(223, 223, 223, 0.7);
+                              if (item.percentage == 100) {
+                                titleColor =
+                                    const Color.fromRGBO(102, 187, 106, 1);
+                                subtitleColor =
+                                    const Color.fromRGBO(102, 187, 106, 0.7);
+                              }
                               return ExpansionPanel(
                                 canTapOnHeader: true,
                                 backgroundColor:
@@ -208,8 +203,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                                     title: Text(
                                       item.header,
                                       textAlign: TextAlign.left,
-                                      style: const TextStyle(
-                                        color: Color.fromRGBO(223, 223, 223, 1),
+                                      style: TextStyle(
+                                        color: titleColor,
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -219,15 +214,14 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                                           " (" +
                                           item.percentage.toStringAsFixed(0) +
                                           "%)",
-                                      style: const TextStyle(
-                                        color:
-                                            Color.fromRGBO(223, 223, 223, 0.7),
+                                      style: TextStyle(
+                                        color: subtitleColor,
                                       ),
                                     ),
                                     leading: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
-                                      child: item.icon,
+                                      child: Icon(item.icon, color: titleColor,),
                                     ),
                                   );
                                 },
@@ -262,9 +256,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
         totalValues++;
       }
       sectionNames.addAll(phases.sectionNames[key]);
+      int percentage =
+          (values.reduce((a, b) => a + b).toDouble() / values.length).round();
       items[index].body = phaseAttributes(key, sectionNames, values);
-      items[index].percentage =
-          (values.reduce((a, b) => a + b).toDouble() / values.length);
+      items[index].percentage = percentage.toDouble();
       total += (values.reduce((a, b) => a + b).toDouble()).round();
       index++;
     });
@@ -279,17 +274,23 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: sectionNames.length,
         itemBuilder: (context, index) {
+          Color titleColor = const Color.fromRGBO(223, 223, 223, 1);
+          Color subtitleColor = const Color.fromRGBO(223, 223, 223, 0.7);
+          if (values[index] == 100) {
+            titleColor = const Color.fromRGBO(102, 187, 106, 1);
+            subtitleColor = const Color.fromRGBO(102, 187, 106, 0.7);
+          }
           return ListTile(
             title: Text(
               sectionNames[index],
-              style: const TextStyle(
-                color: Color.fromRGBO(223, 223, 223, 1),
+              style: TextStyle(
+                color: titleColor,
               ),
             ),
             subtitle: Text(
               values[index].toString() + "%",
-              style: const TextStyle(
-                color: Color.fromRGBO(223, 223, 223, 0.7),
+              style: TextStyle(
+                color: subtitleColor,
               ),
             ),
             trailing: const Padding(
@@ -323,7 +324,7 @@ class ExpansionItem {
   String header;
   String subtitle;
   double percentage;
-  Icon icon;
+  IconData icon;
   Widget body;
   ExpansionItem(this.isExpanded, this.header, this.subtitle, this.percentage,
       this.icon, this.body);
