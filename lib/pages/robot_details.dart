@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:robo_works/dialogs/change_percentage_dialog.dart';
+import 'package:robo_works/glow_behavior.dart';
 import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/phases.dart' as phases;
@@ -19,7 +20,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 1',
       'Setup & Commissioning',
       0,
-      const Icon(Icons.build),
+      const Icon(
+        Icons.build,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
       Container(),
     ),
     ExpansionItem(
@@ -27,7 +31,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 2',
       'Safety',
       0,
-      const Icon(Icons.health_and_safety),
+      const Icon(
+        Icons.health_and_safety,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
       Container(),
     ),
     ExpansionItem(
@@ -35,7 +42,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 3',
       'Path Verification',
       0,
-      const Icon(Icons.alt_route),
+      const Icon(
+        Icons.alt_route,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
       Container(),
     ),
     ExpansionItem(
@@ -43,7 +53,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 4',
       'Automatic Build',
       0,
-      const Icon(Icons.autorenew),
+      const Icon(
+        Icons.autorenew,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
       Container(),
     ),
     ExpansionItem(
@@ -51,7 +64,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       'Phase 5',
       'Documentation',
       0,
-      const Icon(Icons.document_scanner),
+      const Icon(
+        Icons.document_scanner,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
       Container(),
     ),
   ];
@@ -111,47 +127,66 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
               height: 500,
               child: RefreshIndicator(
                 onRefresh: _refreshRobot,
-                child: ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ExpansionPanelList(
-                        expansionCallback: (int index, bool isExpanded) {
-                          setState(() {
-                            items[index].isExpanded = !items[index].isExpanded;
-                          });
-                        },
-                        children: items.map((ExpansionItem item) {
-                          return ExpansionPanel(
-                            headerBuilder:
-                                (BuildContext context, bool isExpanded) {
-                              return ListTile(
-                                title: Text(
-                                  item.header,
-                                  textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                subtitle: Text(item.subtitle +
-                                    " (" +
-                                    item.percentage.toStringAsFixed(0) +
-                                    "%)"),
-                                leading: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8.0),
-                                  child: item.icon,
-                                ),
-                              );
+                child: ScrollConfiguration(
+                  behavior: NoGlowBehavior(),
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                            disabledColor: const Color.fromRGBO(223, 223, 223, 1),
+                          ),
+                          child: ExpansionPanelList(
+                            expansionCallback: (int index, bool isExpanded) {
+                              setState(() {
+                                items[index].isExpanded =
+                                    !items[index].isExpanded;
+                              });
                             },
-                            isExpanded: item.isExpanded,
-                            body: item.body,
-                          );
-                        }).toList(),
+                            children: items.map((ExpansionItem item) {
+                              return ExpansionPanel(
+                                canTapOnHeader: true,
+                                backgroundColor:
+                                    const Color.fromRGBO(66, 66, 66, 1),
+                                headerBuilder:
+                                    (BuildContext context, bool isExpanded) {
+                                  return ListTile(
+                                    title: Text(
+                                      item.header,
+                                      textAlign: TextAlign.left,
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(223, 223, 223, 1),
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      item.subtitle +
+                                          " (" +
+                                          item.percentage.toStringAsFixed(0) +
+                                          "%)",
+                                      style: const TextStyle(
+                                        color: Color.fromRGBO(223, 223, 223, 0.7),
+                                      ),
+                                    ),
+                                    leading: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0),
+                                      child: item.icon,
+                                    ),
+                                  );
+                                },
+                                isExpanded: item.isExpanded,
+                                body: item.body,
+                              );
+                            }).toList(),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -187,11 +222,24 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
         itemCount: sectionNames.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(sectionNames[index]),
-            subtitle: Text(values[index].toString() + "%"),
+            title: Text(
+              sectionNames[index],
+              style: const TextStyle(
+                color: Color.fromRGBO(223, 223, 223, 1),
+              ),
+            ),
+            subtitle: Text(
+              values[index].toString() + "%",
+              style: const TextStyle(
+                color: Color.fromRGBO(223, 223, 223, 0.7),
+              ),
+            ),
             trailing: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.edit),
+              child: Icon(
+                Icons.edit,
+                color: Color.fromRGBO(223, 223, 223, 1),
+              ),
             ),
             onTap: () {
               showDialog(
