@@ -121,7 +121,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              subtitle: Text(item.subtitle + " (" + item.percentage.toStringAsFixed(0) + "%)"),
+                              subtitle: Text(item.subtitle +
+                                  " (" +
+                                  item.percentage.toStringAsFixed(0) +
+                                  "%)"),
                               leading: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
@@ -163,7 +166,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       phases['phase_1']['payloads'] ?? 0
     ]);
     items[0].body = phaseAttributes(names, values);
-    items[0].percentage = (values.reduce((a, b) => a + b).toDouble() / values.length);
+    items[0].percentage =
+        (values.reduce((a, b) => a + b).toDouble() / values.length);
     names = [];
     values = [];
     names.addAll(['Load/Activate Safety', 'Check Safety', 'Safety Buy-off']);
@@ -173,7 +177,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       phases['phase_2']['safety_buy_off'] ?? 0
     ]);
     items[1].body = phaseAttributes(names, values);
-    items[1].percentage = (values.reduce((a, b) => a + b).toDouble() / values.length);
+    items[1].percentage =
+        (values.reduce((a, b) => a + b).toDouble() / values.length);
     names = [];
     values = [];
     names.addAll([
@@ -195,7 +200,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       phases['phase_3']['check_collision_zoning'] ?? 0
     ]);
     items[2].body = phaseAttributes(names, values);
-    items[2].percentage = (values.reduce((a, b) => a + b).toDouble() / values.length);
+    items[2].percentage =
+        (values.reduce((a, b) => a + b).toDouble() / values.length);
     names = [];
     values = [];
     names.addAll([
@@ -211,7 +217,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       phases['phase_4']['cycletime_achieved'] ?? 0
     ]);
     items[3].body = phaseAttributes(names, values);
-    items[3].percentage = (values.reduce((a, b) => a + b).toDouble() / values.length);
+    items[3].percentage =
+        (values.reduce((a, b) => a + b).toDouble() / values.length);
     names = [];
     values = [];
     names.addAll(['Robot Documentation', 'Bob Ready']);
@@ -220,7 +227,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       phases['phase_5']['bob_ready'] ?? 0
     ]);
     items[4].body = phaseAttributes(names, values);
-    items[4].percentage = (values.reduce((a, b) => a + b).toDouble() / values.length);
+    items[4].percentage =
+        (values.reduce((a, b) => a + b).toDouble() / values.length);
   }
 
   Widget phaseAttributes(List<String> names, List<int> values) {
@@ -254,6 +262,6 @@ class ExpansionItem {
   double percentage;
   Icon icon;
   Widget body;
-  ExpansionItem(
-      this.isExpanded, this.header, this.subtitle, this.percentage, this.icon, this.body);
+  ExpansionItem(this.isExpanded, this.header, this.subtitle, this.percentage,
+      this.icon, this.body);
 }
