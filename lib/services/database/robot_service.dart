@@ -19,4 +19,8 @@ class RobotService {
     });
     return response;
   }
+
+  Future<void> setSectionPercentage(String robotId, String phase, String section, int percentage) async {
+    return await robots.doc(robotId).update({'phases.' + phase + '.' + section: percentage});
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:robo_works/dialogs/change_percentage_dialog.dart';
 import 'package:robo_works/models/robot.dart';
+import 'package:robo_works/globals/phases.dart' as phases;
 
 class RobotDetailsPage extends StatefulWidget {
   final Robot robot;
@@ -149,105 +150,48 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
   }
 
   phaseBuilder() {
-    Map<String, dynamic> phases = widget.robot.phases;
-    List<String> names = [];
-    List<int> values = [];
-    names.addAll([
-      'Setup Controller',
-      'Setup Network',
-      'Commissioning Equipment',
-      'Load OLP',
-      'Payloads'
-    ]);
-    values.addAll([
-      phases['phase_1']['setup_controller'] ?? 0,
-      phases['phase_1']['setup_network'] ?? 0,
-      phases['phase_1']['commissioning_equipment'] ?? 0,
-      phases['phase_1']['load_olp'] ?? 0,
-      phases['phase_1']['payloads'] ?? 0
-    ]);
-    items[0].body = phaseAttributes(names, values);
-    items[0].percentage =
-        (values.reduce((a, b) => a + b).toDouble() / values.length);
-    names = [];
-    values = [];
-    names.addAll(['Load/Activate Safety', 'Check Safety', 'Safety Buy-off']);
-    values.addAll([
-      phases['phase_2']['load_activate_safety'] ?? 0,
-      phases['phase_2']['check_safety'] ?? 0,
-      phases['phase_2']['safety_buy_off'] ?? 0
-    ]);
-    items[1].body = phaseAttributes(names, values);
-    items[1].percentage =
-        (values.reduce((a, b) => a + b).toDouble() / values.length);
-    names = [];
-    values = [];
-    names.addAll([
-      'Cell Alignment',
-      'Check TCP\'s',
-      'Check Base/WorkObjects/Uframe',
-      'Check/Teach Docking Routines',
-      'Check/Teach Service Routines',
-      'Check/Teach Production Paths',
-      'Check Collision Zoning'
-    ]);
-    values.addAll([
-      phases['phase_3']['cell_alignment'] ?? 0,
-      phases['phase_3']['check_tcp'] ?? 0,
-      phases['phase_3']['check_base_workobjects_uframe'] ?? 0,
-      phases['phase_3']['check_teach_docking_routines'] ?? 0,
-      phases['phase_3']['check_teach_service_routines'] ?? 0,
-      phases['phase_3']['check_teach_production_paths'] ?? 0,
-      phases['phase_3']['check_collision_zoning'] ?? 0
-    ]);
-    items[2].body = phaseAttributes(names, values);
-    items[2].percentage =
-        (values.reduce((a, b) => a + b).toDouble() / values.length);
-    names = [];
-    values = [];
-    names.addAll([
-      'Automatic Test Service Routines',
-      'Dryrun',
-      'Build Parts',
-      'Cycletime Achieved'
-    ]);
-    values.addAll([
-      phases['phase_4']['automatic_test_service_routines'] ?? 0,
-      phases['phase_4']['dryrun'] ?? 0,
-      phases['phase_4']['build_parts'] ?? 0,
-      phases['phase_4']['cycletime_achieved'] ?? 0
-    ]);
-    items[3].body = phaseAttributes(names, values);
-    items[3].percentage =
-        (values.reduce((a, b) => a + b).toDouble() / values.length);
-    names = [];
-    values = [];
-    names.addAll(['Robot Documentation', 'Bob Ready']);
-    values.addAll([
-      phases['phase_5']['robot_documentation'] ?? 0,
-      phases['phase_5']['bob_ready'] ?? 0
-    ]);
-    items[4].body = phaseAttributes(names, values);
-    items[4].percentage =
-        (values.reduce((a, b) => a + b).toDouble() / values.length);
+    int index = 0;
+    phases.sections.forEach((key, value) {
+      List<String> sectionNames = [];
+      List<int> values = [];
+      List<String> phaseValues = value as List<String>;
+      for (var section in phaseValues) {
+        values.add(widget.robot.phases[key][section] ?? 0);
+      }
+      sectionNames.addAll(phases.sectionNames[key]);
+      items[index].body = phaseAttributes(key, sectionNames, values);
+      items[index].percentage =
+          (values.reduce((a, b) => a + b).toDouble() / values.length);
+      index++;
+    });
   }
 
-  Widget phaseAttributes(List<String> names, List<int> values) {
+  Widget phaseAttributes(
+      String phase, List<String> sectionNames, List<int> values) {
     return SizedBox(
-      height: names.length * 72,
+      height: sectionNames.length * 72,
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: names.length,
+        itemCount: sectionNames.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(names[index]),
+            title: Text(sectionNames[index]),
             subtitle: Text(values[index].toString() + "%"),
             trailing: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
               child: Icon(Icons.edit),
             ),
             onTap: () {
-              showDialog(context: context, builder: (BuildContext context) => ChangePercentageDialog(name: names[index], value: values[index]));
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => ChangePercentageDialog(
+                  robot: widget.robot,
+                  phase: phase,
+                  sectionName: sectionNames[index],
+                  section: phases.sections[phase][index],
+                  value: values[index],
+                ),
+              );
             },
           );
         },

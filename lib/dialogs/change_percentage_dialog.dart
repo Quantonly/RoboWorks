@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'package:robo_works/models/robot.dart';
+import 'package:robo_works/services/database/robot_service.dart';
+
 class ChangePercentageDialog extends StatefulWidget {
-  final String name;
+  final Robot robot;
+  final String phase;
+  final String sectionName;
+  final String section;
   final int value;
   const ChangePercentageDialog(
-      {Key? key, required this.name, required this.value})
+      {Key? key, required this.robot,  required this.phase, required this.sectionName, required this.section, required this.value})
       : super(key: key);
 
   @override
@@ -24,7 +30,7 @@ class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       insetPadding: const EdgeInsets.all(20),
-      title: Text(widget.name),
+      title: Text(widget.sectionName),
       content: SizedBox(
         height: 75,
         width: double.maxFinite,
@@ -50,6 +56,7 @@ class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
           child: const Text('Confirm'),
           onPressed: () {
             Navigator.of(context).pop();
+            RobotService(projectId: widget.robot.project).setSectionPercentage(widget.robot.id, widget.phase, widget.section, percentage);
           },
         ),
       ],
