@@ -3,6 +3,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/pages/robot_details.dart';
 import 'package:robo_works/services/database/robot_service.dart';
+import 'package:robo_works/globals/data.dart' as data;
 
 class RobotsPage extends StatefulWidget {
   final String projectId;
@@ -23,7 +24,12 @@ class _RobotsPageState extends State<RobotsPage> {
 
   Future<List<Robot>> _fetchRobots() async {
     List<Robot> robots = await RobotService(projectId: widget.projectId).getRobots();
+    data.robots = robots;
     return robots;
+  }
+
+  Future<void> _refreshRobots() async {
+    setState(() {});
   }
 
   @override
@@ -74,37 +80,40 @@ class _RobotsPageState extends State<RobotsPage> {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        Robot robot = snapshot.data[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: RobotDetailsPage(robot: robot),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                robot.name,
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 28),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    return RefreshIndicator(
+                      onRefresh: _refreshRobots,
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          Robot robot = snapshot.data[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: RobotDetailsPage(robot: robot),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  robot.name,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 28),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     );
                   }
                 },

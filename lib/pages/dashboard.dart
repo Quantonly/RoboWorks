@@ -43,6 +43,10 @@ class _DashboardPageState extends State<DashboardPage> {
     return projects;
   }
 
+  Future<void> _refreshProjects() async {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,37 +97,40 @@ class _DashboardPageState extends State<DashboardPage> {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   } else {
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) {
-                        Project project = snapshot.data[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeft,
-                                child: RobotsPage(projectId: project.id),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                project.name,
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 28),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                    return RefreshIndicator(
+                      onRefresh: _refreshProjects,
+                      child: ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (context, index) {
+                          Project project = snapshot.data[index];
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeft,
+                                  child: RobotsPage(projectId: project.id),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              children: [
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  project.name,
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 28),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     );
                   }
                 },

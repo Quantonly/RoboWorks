@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:robo_works/dialogs/change_percentage_dialog.dart';
 import 'package:robo_works/models/robot.dart';
+import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/phases.dart' as phases;
 
 class RobotDetailsPage extends StatefulWidget {
@@ -55,6 +56,14 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
     ),
   ];
 
+  Future<Robot> _refreshRobot() async {
+    Robot robot = await RobotService(projectId: widget.robot.project)
+        .getRobot(widget.robot.id);
+    widget.robot.phases = robot.phases;
+    setState(() {});
+    return robot;
+  }
+
   @override
   Widget build(BuildContext context) {
     phaseBuilder();
@@ -100,47 +109,50 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
           Expanded(
             child: SizedBox(
               height: 500,
-              child: ListView(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: ExpansionPanelList(
-                      expansionCallback: (int index, bool isExpanded) {
-                        setState(() {
-                          items[index].isExpanded = !items[index].isExpanded;
-                        });
-                      },
-                      children: items.map((ExpansionItem item) {
-                        return ExpansionPanel(
-                          headerBuilder:
-                              (BuildContext context, bool isExpanded) {
-                            return ListTile(
-                              title: Text(
-                                item.header,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w400,
+              child: RefreshIndicator(
+                onRefresh: _refreshRobot,
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ExpansionPanelList(
+                        expansionCallback: (int index, bool isExpanded) {
+                          setState(() {
+                            items[index].isExpanded = !items[index].isExpanded;
+                          });
+                        },
+                        children: items.map((ExpansionItem item) {
+                          return ExpansionPanel(
+                            headerBuilder:
+                                (BuildContext context, bool isExpanded) {
+                              return ListTile(
+                                title: Text(
+                                  item.header,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w400,
+                                  ),
                                 ),
-                              ),
-                              subtitle: Text(item.subtitle +
-                                  " (" +
-                                  item.percentage.toStringAsFixed(0) +
-                                  "%)"),
-                              leading: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8.0),
-                                child: item.icon,
-                              ),
-                            );
-                          },
-                          isExpanded: item.isExpanded,
-                          body: item.body,
-                        );
-                      }).toList(),
+                                subtitle: Text(item.subtitle +
+                                    " (" +
+                                    item.percentage.toStringAsFixed(0) +
+                                    "%)"),
+                                leading: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: item.icon,
+                                ),
+                              );
+                            },
+                            isExpanded: item.isExpanded,
+                            body: item.body,
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -191,7 +203,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                   section: phases.sections[phase][index],
                   value: values[index],
                 ),
-              );
+              ).then((value) => setState(() {}));
             },
           );
         },

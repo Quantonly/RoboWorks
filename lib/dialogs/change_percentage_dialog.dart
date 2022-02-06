@@ -57,6 +57,7 @@ class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
           onPressed: () {
             Navigator.of(context).pop();
             RobotService(projectId: widget.robot.project).setSectionPercentage(widget.robot.id, widget.phase, widget.section, percentage);
+            widget.robot.phases[widget.phase][widget.section] = percentage;
           },
         ),
       ],

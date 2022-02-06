@@ -9,6 +9,13 @@ class RobotService {
   final CollectionReference robots =
       FirebaseFirestore.instance.collection('robots');
 
+  Future<Robot> getRobot(String robotId) async {
+    Robot robot = await robots.doc(robotId).get().then((snapshot) {
+      return Robot.fromMap(snapshot.data() as Map<String, dynamic>, snapshot.id);
+    });
+    return robot;
+  }
+
   Future<List<Robot>> getRobots() async {
     List<Robot> response = await robots.where('project', isEqualTo: projectId).get().then((snapshot) {
       List<Robot> robotList = [];
