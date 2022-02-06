@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:robo_works/dialogs/change_percentage_dialog.dart';
 import 'package:robo_works/models/robot.dart';
 
 class RobotDetailsPage extends StatefulWidget {
@@ -243,10 +244,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
             subtitle: Text(values[index].toString() + "%"),
             trailing: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(Icons.keyboard_arrow_right),
+              child: Icon(Icons.edit),
             ),
             onTap: () {
-              //
+              showDialog(context: context, builder: (BuildContext context) => ChangePercentageDialog(name: names[index], value: values[index]));
             },
           );
         },
