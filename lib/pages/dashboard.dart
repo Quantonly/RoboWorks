@@ -3,6 +3,7 @@ import 'package:page_transition/page_transition.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:robo_works/dialogs/sign_out_dialog.dart';
 
 import 'package:robo_works/models/user_data.dart';
 import 'package:robo_works/models/project.dart';
@@ -50,6 +51,24 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
+        title: const Text(
+          'RoboWorks',
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign out',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => const SignOutDialog(),
+              );
+            },
+          ),
+        ],
+      ),
       backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
       resizeToAvoidBottomInset: false,
       body: Column(

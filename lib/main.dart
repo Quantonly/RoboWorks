@@ -36,7 +36,7 @@ class RoboWorks extends StatelessWidget {
       child: MaterialApp(
         title: 'RoboWorks',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          primarySwatch: Colors.blueGrey,
         ),
         debugShowCheckedModeBanner: false,
         home: const AuthenticationWrapper(),

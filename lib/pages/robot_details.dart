@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robo_works/dialogs/change_percentage_dialog.dart';
+import 'package:robo_works/dialogs/sign_out_dialog.dart';
 import 'package:robo_works/glow_behavior.dart';
 import 'package:robo_works/models/robot.dart';
+import 'package:robo_works/services/authentication.dart';
 import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/phases.dart' as phases;
 
@@ -84,59 +87,45 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
   Widget build(BuildContext context) {
     phaseBuilder();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
+        title: const Text(
+          'RoboWorks',
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sign out',
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => const SignOutDialog(),
+              );
+            },
+          ),
+        ],
+      ),
       backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
       resizeToAvoidBottomInset: false,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 150,
-          ),
-          Text(
-            widget.robot.id,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.white,
-              ),
-              child: const Center(
-                child: Text(
-                  'Go Back',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: SizedBox(
-              height: 500,
               child: RefreshIndicator(
                 onRefresh: _refreshRobot,
                 child: ScrollConfiguration(
                   behavior: NoGlowBehavior(),
                   child: ListView(
-                    physics: const BouncingScrollPhysics(),
+                    physics: const BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics()),
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Theme(
                           data: Theme.of(context).copyWith(
-                            disabledColor: const Color.fromRGBO(223, 223, 223, 1),
+                            disabledColor:
+                                const Color.fromRGBO(223, 223, 223, 1),
                           ),
                           child: ExpansionPanelList(
                             expansionCallback: (int index, bool isExpanded) {
@@ -168,7 +157,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                                           item.percentage.toStringAsFixed(0) +
                                           "%)",
                                       style: const TextStyle(
-                                        color: Color.fromRGBO(223, 223, 223, 0.7),
+                                        color:
+                                            Color.fromRGBO(223, 223, 223, 0.7),
                                       ),
                                     ),
                                     leading: Padding(
