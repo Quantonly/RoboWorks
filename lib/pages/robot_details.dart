@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:robo_works/dialogs/change_percentage_dialog.dart';
 import 'package:robo_works/dialogs/sign_out_dialog.dart';
 import 'package:robo_works/glow_behavior.dart';
+import 'package:robo_works/models/project.dart';
 import 'package:robo_works/models/robot.dart';
-import 'package:robo_works/services/authentication.dart';
 import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/phases.dart' as phases;
 
 class RobotDetailsPage extends StatefulWidget {
+  final Project project;
   final Robot robot;
-  const RobotDetailsPage({Key? key, required this.robot}) : super(key: key);
+  const RobotDetailsPage({Key? key, required this.project, required this.robot})
+      : super(key: key);
 
   @override
   State<RobotDetailsPage> createState() => _RobotDetailsPageState();
 }
 
 class _RobotDetailsPageState extends State<RobotDetailsPage> {
+  int totalPercentage = 0;
   List<ExpansionItem> items = <ExpansionItem>[
     ExpansionItem(
       false,
@@ -90,7 +93,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
         title: const Text(
-          'RoboWorks',
+          'Robot',
         ),
         actions: <Widget>[
           IconButton(
@@ -110,6 +113,66 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(
+            height: 20,
+          ),
+          CircularPercentIndicator(
+            center: Text(
+              totalPercentage.toString() + "%",
+              style: const TextStyle(
+                color: Color.fromRGBO(223, 223, 223, 1),
+                fontWeight: FontWeight.bold,
+                fontSize: 20.0,
+              ),
+            ),
+            radius: 70.0,
+            animation: true,
+            animationDuration: 1000,
+            lineWidth: 15.0,
+            percent: totalPercentage / 100,
+            reverse: false,
+            arcType: ArcType.FULL,
+            startAngle: 0.0,
+            animateFromLastPercent: true,
+            circularStrokeCap: CircularStrokeCap.round,
+            linearGradient: const LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              tileMode: TileMode.clamp,
+              stops: [0.0, 1.0],
+              colors: <Color>[
+                Colors.red,
+                Colors.green,
+              ],
+            ),
+            arcBackgroundColor: Colors.grey,
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Column(
+            children: [
+              Text(
+                'Project name: ' + widget.project.name,
+                style: const TextStyle(
+                  color: Color.fromRGBO(223, 223, 223, 1),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                'Robot name: ' + widget.robot.name,
+                style: const TextStyle(
+                  color: Color.fromRGBO(223, 223, 223, 1),
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           Expanded(
             child: SizedBox(
               child: RefreshIndicator(
@@ -188,19 +251,24 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
 
   phaseBuilder() {
     int index = 0;
+    int total = 0;
+    int totalValues = 0;
     phases.sections.forEach((key, value) {
       List<String> sectionNames = [];
       List<int> values = [];
       List<String> phaseValues = value as List<String>;
       for (var section in phaseValues) {
         values.add(widget.robot.phases[key][section] ?? 0);
+        totalValues++;
       }
       sectionNames.addAll(phases.sectionNames[key]);
       items[index].body = phaseAttributes(key, sectionNames, values);
       items[index].percentage =
           (values.reduce((a, b) => a + b).toDouble() / values.length);
+      total += (values.reduce((a, b) => a + b).toDouble()).round();
       index++;
     });
+    totalPercentage = (total / totalValues).round();
   }
 
   Widget phaseAttributes(

@@ -8,7 +8,6 @@ import 'package:robo_works/dialogs/sign_out_dialog.dart';
 import 'package:robo_works/models/user_data.dart';
 import 'package:robo_works/models/project.dart';
 import 'package:robo_works/pages/robots.dart';
-import 'package:robo_works/services/authentication.dart';
 import 'package:robo_works/services/database/project_service.dart';
 import 'package:robo_works/services/database/user_service.dart';
 import 'package:robo_works/globals/data.dart' as data;
@@ -54,7 +53,7 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
         title: const Text(
-          'RoboWorks',
+          'Dashboard',
         ),
         actions: <Widget>[
           IconButton(
@@ -74,39 +73,6 @@ class _DashboardPageState extends State<DashboardPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(
-            height: 150,
-          ),
-          const Text(
-            'Dashboard',
-            style: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              context.read<AuthenticationService>().signOut();
-            },
-            child: Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.white,
-              ),
-              child: const Center(
-                child: Text(
-                  'Sign Out',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: SizedBox(
               height: 500,
@@ -128,7 +94,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeft,
-                                  child: RobotsPage(projectId: project.id),
+                                  child: RobotsPage(project: project),
                                 ),
                               );
                             },

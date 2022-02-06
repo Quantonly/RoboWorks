@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:robo_works/dialogs/sign_out_dialog.dart';
+import 'package:robo_works/models/project.dart';
 import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/pages/robot_details.dart';
 import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/data.dart' as data;
 
 class RobotsPage extends StatefulWidget {
-  final String projectId;
-  const RobotsPage({Key? key, required this.projectId}) : super(key: key);
+  final Project project;
+  const RobotsPage({Key? key, required this.project}) : super(key: key);
 
   @override
   State<RobotsPage> createState() => _RobotsPageState();
@@ -24,7 +25,7 @@ class _RobotsPageState extends State<RobotsPage> {
   }
 
   Future<List<Robot>> _fetchRobots() async {
-    List<Robot> robots = await RobotService(projectId: widget.projectId).getRobots();
+    List<Robot> robots = await RobotService(projectId: widget.project.id).getRobots();
     data.robots = robots;
     return robots;
   }
@@ -39,7 +40,7 @@ class _RobotsPageState extends State<RobotsPage> {
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
         title: const Text(
-          'RoboWorks',
+          'Project',
         ),
         actions: <Widget>[
           IconButton(
@@ -59,37 +60,6 @@ class _RobotsPageState extends State<RobotsPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const SizedBox(height: 150,),
-          Text(
-            widget.projectId,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 10,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50),
-                color: Colors.white,
-              ),
-              child: const Center(
-                child: Text(
-                  'Go Back',
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-            ),
-          ),
           Expanded(
             child: SizedBox(
               height: 500,
@@ -111,7 +81,7 @@ class _RobotsPageState extends State<RobotsPage> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeft,
-                                  child: RobotDetailsPage(robot: robot),
+                                  child: RobotDetailsPage(project: widget.project, robot: robot),
                                 ),
                               );
                             },
