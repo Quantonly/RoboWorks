@@ -116,9 +116,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              subtitle: const Text(
-                                'Total',
-                                style: TextStyle(
+                              subtitle: Text(
+                                "Total robots: " + project.robotCount.toString(),
+                                style: const TextStyle(
                                   color: Color.fromRGBO(223, 223, 223, 0.7),
                                 ),
                               ),

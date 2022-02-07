@@ -20,6 +20,7 @@ class RobotsPage extends StatefulWidget {
 
 class _RobotsPageState extends State<RobotsPage> {
   Status status = Status.retrieving;
+  int totalCompleted = 0;
 
   @override
   void initState() {
@@ -64,6 +65,13 @@ class _RobotsPageState extends State<RobotsPage> {
                   Robot robot = data.robots[index];
                   int percentage = robot.percentage;
                   String currentPhase = robot.getCurrentPhase();
+                  Color titleColor = const Color.fromRGBO(223, 223, 223, 1);
+                  Color subtitleColor =
+                      const Color.fromRGBO(223, 223, 223, 0.7);
+                  if (percentage == 100) {
+                    titleColor = const Color.fromRGBO(102, 187, 106, 1);
+                    subtitleColor = const Color.fromRGBO(102, 187, 106, 0.7);
+                  }
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -94,8 +102,8 @@ class _RobotsPageState extends State<RobotsPage> {
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Text(
                                   percentage.toString() + "%",
-                                  style: const TextStyle(
-                                    color: Color.fromRGBO(223, 223, 223, 1),
+                                  style: TextStyle(
+                                    color: titleColor,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -103,16 +111,16 @@ class _RobotsPageState extends State<RobotsPage> {
                               title: Text(
                                 robot.name,
                                 textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  color: Color.fromRGBO(223, 223, 223, 1),
+                                style: TextStyle(
+                                  color: titleColor,
                                   fontSize: 20.0,
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
                               subtitle: Text(
                                 currentPhase,
-                                style: const TextStyle(
-                                  color: Color.fromRGBO(223, 223, 223, 0.7),
+                                style: TextStyle(
+                                  color: subtitleColor,
                                 ),
                               ),
                             ),
@@ -130,8 +138,16 @@ class _RobotsPageState extends State<RobotsPage> {
     }
   }
 
+  void countCompleted() {
+    totalCompleted = 0;
+    for (var robot in data.robots) {
+      if (robot.percentage == 100) totalCompleted++;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    countCompleted();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
@@ -176,19 +192,26 @@ class _RobotsPageState extends State<RobotsPage> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 16),
+                child: Text(
+                  'Robots',
+                  style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(223, 223, 223, 1)),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 16),
-                child: Row(
-                  children: const <Widget>[
-                    Text(
-                      'Robots',
-                      style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(223, 223, 223, 1)),
-                    ),
-                  ],
+                padding: const EdgeInsets.only(right: 16),
+                child: Text(
+                  "Completed: " + totalCompleted.toString() + "/" + data.robots.length.toString(),
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color.fromRGBO(223, 223, 223, 1)),
                 ),
               ),
             ],
