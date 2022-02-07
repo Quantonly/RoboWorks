@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:robo_works/dialogs/sign_out_dialog.dart';
+import 'package:robo_works/dialogs/sort_dialog.dart';
 import 'package:robo_works/glow_behavior.dart';
 import 'package:robo_works/models/project.dart';
 import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/pages/robot_details.dart';
-import 'package:robo_works/services/database/robot_service.dart';
-import 'package:robo_works/globals/data.dart' as data;
+import 'package:robo_works/providers/robot_provider.dart';
+import 'package:robo_works/globals/style.dart' as style;
 
 enum Status { retrieving, retrieved }
 
@@ -19,8 +21,16 @@ class RobotsPage extends StatefulWidget {
 }
 
 class _RobotsPageState extends State<RobotsPage> {
+  List<Robot> robots = [];
   Status status = Status.retrieving;
+  String sort = "Percentage ↑";
   int totalCompleted = 0;
+  List<String> dropDown = <String>[
+    "Name ↓",
+    "Name ↑",
+    "Percentage ↓",
+    "Percentage ↑"
+  ];
 
   @override
   void initState() {
@@ -30,14 +40,11 @@ class _RobotsPageState extends State<RobotsPage> {
     super.initState();
   }
 
-  Future<List<Robot>> _fetchRobots() async {
-    List<Robot> robots =
-        await RobotService(projectId: widget.project.id).getRobots();
-    data.robots = robots;
+  Future<void> _fetchRobots() async {
+    context.read<RobotProvider>().setRobots(widget.project.id);
     setState(() {
       status = Status.retrieved;
     });
-    return robots;
   }
 
   Widget getInfo(Status newStatus) {
@@ -60,9 +67,9 @@ class _RobotsPageState extends State<RobotsPage> {
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),
-                itemCount: data.robots.length,
+                itemCount: robots.length,
                 itemBuilder: (context, index) {
-                  Robot robot = data.robots[index];
+                  Robot robot = robots[index];
                   int percentage = robot.percentage;
                   String currentPhase = robot.getCurrentPhase();
                   Color titleColor = const Color.fromRGBO(223, 223, 223, 1);
@@ -81,7 +88,10 @@ class _RobotsPageState extends State<RobotsPage> {
                           child: RobotDetailsPage(
                               project: widget.project, robot: robot),
                         ),
-                      ).then((value) => setState(() {}));
+                      ).then(
+                        (value) =>
+                            context.read<RobotProvider>().sortRobots(sort),
+                      );
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -140,13 +150,14 @@ class _RobotsPageState extends State<RobotsPage> {
 
   void countCompleted() {
     totalCompleted = 0;
-    for (var robot in data.robots) {
+    for (var robot in robots) {
       if (robot.percentage == 100) totalCompleted++;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    robots = context.watch<RobotProvider>().filteredRobots;
     countCompleted();
     return Scaffold(
       appBar: AppBar(
@@ -207,11 +218,50 @@ class _RobotsPageState extends State<RobotsPage> {
               Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: Text(
-                  "Completed: " + totalCompleted.toString() + "/" + data.robots.length.toString(),
+                  "Completed: " +
+                      totalCompleted.toString() +
+                      "/" +
+                      robots.length.toString(),
                   style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Color.fromRGBO(223, 223, 223, 1)),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16.0, top: 16.0, right: 24),
+                  child: TextFormField(
+                    initialValue: context.read<RobotProvider>().currentFilter,
+                    decoration: style.getTextFieldDecoration('Search robots'),
+                    onChanged: (value) {
+                      context.read<RobotProvider>().filterRobots(value);
+                    },
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                child: IconButton(
+                  color: const Color.fromRGBO(223, 223, 223, 1),
+                  icon: const Icon(Icons.sort),
+                  tooltip: 'Sort',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => SortDialog(
+                        dropDown: dropDown,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
