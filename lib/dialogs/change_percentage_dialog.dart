@@ -45,15 +45,14 @@ class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
           min: 0,
           max: 100,
           interval: 25,
-       showTicks: true,
+          showTicks: true,
           showLabels: true,
           enableTooltip: true,
-       minorTicksPerInterval: 1,
+          minorTicksPerInterval: 1,
           onChanged: (newPercentage) {
             setState(() {
               percentage = newPercentage.round();
             });
-            print(percentage);
           },
         ),
       ),

@@ -221,7 +221,10 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                                     leading: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0),
-                                      child: Icon(item.icon, color: titleColor,),
+                                      child: Icon(
+                                        item.icon,
+                                        color: titleColor,
+                                      ),
                                     ),
                                   );
                                 },
