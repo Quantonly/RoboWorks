@@ -67,6 +67,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
     Robot robot = await RobotService(projectId: widget.robot.project)
         .getRobot(widget.robot.id);
     widget.robot.phases = robot.phases;
+    widget.robot.calculateRobotPercentage();
     setState(() {});
     return robot;
   }
@@ -248,38 +249,28 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
 
   phaseBuilder() {
     int index = 0;
-    int total = 0;
-    int totalValues = 0;
     phases.sections.forEach((key, value) {
       List<String> sectionNames = [];
-      List<int> values = [];
-      List<String> phaseValues = value as List<String>;
-      for (var section in phaseValues) {
-        values.add(widget.robot.phases[key][section] ?? 0);
-        totalValues++;
-      }
       sectionNames.addAll(phases.sectionNames[key]);
-      int percentage =
-          (values.reduce((a, b) => a + b).toDouble() / values.length).round();
-      items[index].body = phaseAttributes(key, sectionNames, values);
+      int percentage = widget.robot.calculatePhasePercentage(key);
+      items[index].body = phaseAttributes(key, sectionNames);
       items[index].percentage = percentage.toDouble();
-      total += (values.reduce((a, b) => a + b).toDouble()).round();
       index++;
     });
-    totalPercentage = (total / totalValues).round();
+    totalPercentage = widget.robot.percentage;
   }
 
-  Widget phaseAttributes(
-      String phase, List<String> sectionNames, List<int> values) {
+  Widget phaseAttributes(String phase, List<String> sectionNames) {
     return SizedBox(
       height: sectionNames.length * 72,
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         itemCount: sectionNames.length,
         itemBuilder: (context, index) {
+          int sectionPercentage = widget.robot.getSectionPercentage(phase, index);
           Color titleColor = const Color.fromRGBO(223, 223, 223, 1);
           Color subtitleColor = const Color.fromRGBO(223, 223, 223, 0.7);
-          if (values[index] == 100) {
+          if (sectionPercentage == 100) {
             titleColor = const Color.fromRGBO(102, 187, 106, 1);
             subtitleColor = const Color.fromRGBO(102, 187, 106, 0.7);
           }
@@ -291,7 +282,7 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
               ),
             ),
             subtitle: Text(
-              values[index].toString() + "%",
+              sectionPercentage.toString() + "%",
               style: TextStyle(
                 color: subtitleColor,
               ),
@@ -311,9 +302,12 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                   phase: phase,
                   sectionName: sectionNames[index],
                   section: phases.sections[phase][index],
-                  value: values[index],
+                  value: sectionPercentage,
                 ),
-              ).then((value) => setState(() {}));
+              ).then((value) {
+                widget.robot.calculateRobotPercentage();
+                setState(() {});
+              });
             },
           );
         },

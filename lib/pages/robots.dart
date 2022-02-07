@@ -7,7 +7,6 @@ import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/pages/robot_details.dart';
 import 'package:robo_works/services/database/robot_service.dart';
 import 'package:robo_works/globals/data.dart' as data;
-import 'package:robo_works/globals/phases.dart' as phases;
 
 enum Status { retrieving, retrieved }
 
@@ -40,60 +39,6 @@ class _RobotsPageState extends State<RobotsPage> {
     return robots;
   }
 
-  Future<void> _refreshRobots() async {
-    setState(() {});
-  }
-
-  int getRobotPercentage(Robot robot) {
-    int total = 0;
-    int totalValues = 0;
-    phases.sections.forEach((key, value) {
-      List<int> values = [];
-      List<String> phaseValues = value as List<String>;
-      for (var section in phaseValues) {
-        values.add(robot.phases[key][section] ?? 0);
-        totalValues++;
-      }
-      total += (values.reduce((a, b) => a + b).toDouble()).round();
-    });
-    return (total / totalValues).round();
-  }
-
-  String getCurrentPhase(Robot robot) {
-    String currentPhase = '';
-    phases.sections.forEach((key, value) {
-      List<int> values = [];
-      List<String> phaseValues = value as List<String>;
-      for (var section in phaseValues) {
-        values.add(robot.phases[key][section] ?? 0);
-      }
-      int percentage =
-          (values.reduce((a, b) => a + b).toDouble() / values.length).round();
-      if (percentage < 100 && currentPhase == '') currentPhase = key;
-    });
-    switch (currentPhase) {
-      case 'phase_1':
-        currentPhase = 'Phase 1: Setup & Commissioning';
-        break;
-      case 'phase_2':
-        currentPhase = 'Phase 2: Safety';
-        break;
-      case 'phase_3':
-        currentPhase = 'Phase 3: Path Verification';
-        break;
-      case 'phase_4':
-        currentPhase = 'Phase 4: Automatic Build';
-        break;
-      case 'phase_5':
-        currentPhase = 'Phase 5: Documentation';
-        break;
-      case '':
-        currentPhase = 'All phases complete';
-        break;
-    }
-    return currentPhase;
-  }
-
   Widget getInfo(Status newStatus) {
     if (newStatus == Status.retrieving) {
       return const Expanded(
@@ -117,8 +62,8 @@ class _RobotsPageState extends State<RobotsPage> {
                 itemCount: data.robots.length,
                 itemBuilder: (context, index) {
                   Robot robot = data.robots[index];
-                  int percentage = getRobotPercentage(robot);
-                  String currentPhase = getCurrentPhase(robot);
+                  int percentage = robot.percentage;
+                  String currentPhase = robot.getCurrentPhase();
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -128,7 +73,7 @@ class _RobotsPageState extends State<RobotsPage> {
                           child: RobotDetailsPage(
                               project: widget.project, robot: robot),
                         ),
-                      );
+                      ).then((value) => setState(() {}));
                     },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
