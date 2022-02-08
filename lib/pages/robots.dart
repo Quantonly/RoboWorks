@@ -23,7 +23,7 @@ class RobotsPage extends StatefulWidget {
 class _RobotsPageState extends State<RobotsPage> {
   List<Robot> robots = [];
   Status status = Status.retrieving;
-  String sort = "Percentage ↑";
+  String sort = "Name";
   int totalCompleted = 0;
   List<String> dropDown = <String>[
     "Name",

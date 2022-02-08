@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:robo_works/pages/authentication/authentication_wrapper.dart';
+import 'package:robo_works/providers/project_provider.dart';
 import 'package:robo_works/providers/robot_provider.dart';
 import 'package:robo_works/services/authentication.dart';
 
@@ -28,6 +29,7 @@ class RoboWorks extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => RobotProvider()),
+        ChangeNotifierProvider(create: (_) => ProjectProvider()),
         Provider<AuthenticationService>(
           create: (_) => AuthenticationService(FirebaseAuth.instance),
         ),

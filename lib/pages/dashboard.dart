@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:robo_works/dialogs/sign_out_dialog.dart';
-import 'package:robo_works/glow_behavior.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:robo_works/dialogs/sign_out_dialog.dart';
+import 'package:robo_works/dialogs/sort_dialog.dart';
 import 'package:robo_works/models/user_data.dart';
 import 'package:robo_works/models/project.dart';
 import 'package:robo_works/pages/robots.dart';
-import 'package:robo_works/services/database/project_service.dart';
+import 'package:robo_works/providers/project_provider.dart';
 import 'package:robo_works/services/database/user_service.dart';
+import 'package:robo_works/glow_behavior.dart';
+
+import 'package:robo_works/globals/style.dart' as style;
 import 'package:robo_works/globals/data.dart' as data;
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum Status { retrieving, retrieved }
 
@@ -24,7 +27,13 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  List<Project> projects = [];
   Status status = Status.retrieving;
+  String sort = "Name";
+  List<String> dropDown = <String>[
+    "Name",
+    "Total robots",
+  ];
 
   @override
   void initState() {
@@ -34,7 +43,7 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
   }
 
-  Future<List<Project>> _fetchUserData() async {
+  Future<void> _fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     data.displayName = prefs.getString('displayName') ?? '';
     _refreshPage();
@@ -43,17 +52,14 @@ class _DashboardPageState extends State<DashboardPage> {
     prefs.setString('displayName', userData.displayName);
     data.displayName = userData.displayName;
     data.grantedProjects = userData.projects;
-    List<Project> projects = await _fetchProjects();
-    return projects;
+    await _fetchProjects();
   }
 
-  Future<List<Project>> _fetchProjects() async {
-    List<Project> projects = await ProjectService().getGrantedProjects();
-    data.projects = projects;
+  Future<void> _fetchProjects() async {
+    context.read<ProjectProvider>().setProjects();
     setState(() {
       status = Status.retrieved;
     });
-    return projects;
   }
 
   Future<void> _refreshPage() async {
@@ -80,9 +86,9 @@ class _DashboardPageState extends State<DashboardPage> {
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),
-                itemCount: data.projects.length,
+                itemCount: projects.length,
                 itemBuilder: (context, index) {
-                  Project project = data.projects[index];
+                  Project project = projects[index];
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -139,6 +145,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    projects = context.watch<ProjectProvider>().filteredProjects;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
@@ -196,6 +203,42 @@ class _DashboardPageState extends State<DashboardPage> {
                           color: Color.fromRGBO(223, 223, 223, 1)),
                     ),
                   ],
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16.0, top: 16.0, right: 24),
+                  child: TextFormField(
+                    initialValue: context.read<ProjectProvider>().currentFilter,
+                    decoration: style.getTextFieldDecoration('Search projects'),
+                    onChanged: (value) {
+                      context.read<ProjectProvider>().filterProjects(value);
+                    },
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                child: IconButton(
+                  color: const Color.fromRGBO(223, 223, 223, 1),
+                  icon: const Icon(Icons.sort),
+                  tooltip: 'Sort',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) => SortDialog(
+                        dropDown: dropDown,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],
