@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:motion_toast/motion_toast.dart';
+import 'package:motion_toast/resources/arrays.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'package:provider/provider.dart';
+import 'package:robo_works/pages/authentication/forgot_password.dart';
 
 import 'package:robo_works/services/authentication.dart';
 import 'package:robo_works/globals/style.dart' as style;
@@ -26,37 +30,80 @@ class _SignInPageState extends State<SignInPage> {
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
         )
-        .then((res) => {
-              if (res['error'] != null)
-                {
-                  // ignore: avoid_print
-                  print(res['error'])
-                },
-            });
+        .then(
+          (res) => {
+            if (res['error'] != null)
+              {
+                showErrorToast(res['error']),
+              },
+          },
+        );
+  }
+
+  void showErrorToast(text) {
+    MotionToast.error(
+      title: const Text(
+        'Error',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      description: Text(text),
+      animationType: ANIMATION.fromTop,
+      position: MOTION_TOAST_POSITION.top,
+      width: 300,
+      toastDuration: const Duration(milliseconds: 2000),
+    ).show(context);
+    FocusScope.of(context).unfocus();
+  }
+
+  void showSuccessToast(text) {
+    MotionToast.success(
+      title: const Text(
+        'Success',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      description: Text(text),
+      animationType: ANIMATION.fromTop,
+      position: MOTION_TOAST_POSITION.top,
+      width: 300,
+      toastDuration: const Duration(milliseconds: 4000),
+    ).show(context);
+    FocusScope.of(context).unfocus();
+  }
+
+  void passwordReset() async {
+    final result = await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeft,
+        child: const ForgotPasswordPage(),
+      ),
+    );
+    if (result != null) {
+      emailController.text = result;
+      passwordController.clear();
+      showSuccessToast('Password reset mail has been send');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromRGBO(40, 40, 40, 1),
+        title: const Text(
+          'RoboWorks',
+        ),
+      ),
       backgroundColor: const Color.fromRGBO(33, 33, 33, 1),
       body: Center(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Center(
-                child: Row(
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: SizedBox(
-                        height: 70,
-                        width: MediaQuery.of(context).size.width,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               Container(
                 transform: Matrix4.translationValues(0.0, -30.0, 0.0),
                 child: const Center(
@@ -102,8 +149,8 @@ class _SignInPageState extends State<SignInPage> {
                       controller: passwordController,
                       autovalidateMode: AutovalidateMode.onUserInteraction,
                       decoration: style.getTextFieldDecoration('Password'),
-                      validator: RequiredValidator(
-                          errorText: 'Password is required'),
+                      validator:
+                          RequiredValidator(errorText: 'Password is required'),
                       style: const TextStyle(
                         color: Colors.white,
                       ),
@@ -111,6 +158,28 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                   ),
                 ]),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  bottom: 10,
+                ),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    onTap: () {
+                      passwordReset();
+                    },
+                    child: const Text(
+                      'Forgot password?',
+                      style: TextStyle(
+                        color: Colors.blueAccent,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ),
               ),
               GestureDetector(
                 onTap: () {

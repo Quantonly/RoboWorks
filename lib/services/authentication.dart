@@ -12,10 +12,20 @@ class AuthenticationService {
       await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
       return {'success': 'successfully_logged_in'};
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-disabled') return {'error': 'account_disabled'};
-      if (e.code == 'user-not-found') return {'error': 'email_not_found'};
-      if (e.code == 'wrong-password') return {'error': 'password_incorrect'};
-      return {'error': 'something_went_wrong'};
+      if (e.code == 'user-disabled') return {'error': 'This account has been disabled'};
+      if (e.code == 'user-not-found') return {'error': 'Email not found'};
+      if (e.code == 'wrong-password') return {'error': 'Incorrect password'};
+      return {'error': 'Something went wrong'};
+    }
+  }
+
+  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return {'success': 'Password reset mail has been send'};
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') return {'error': 'Email not found'};
+      return {'error': 'Something went wrong'};
     }
   }
 
