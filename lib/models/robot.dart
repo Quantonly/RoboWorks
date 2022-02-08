@@ -1,4 +1,5 @@
 import 'package:robo_works/globals/phases.dart' as phases_data;
+import 'package:robo_works/globals/data.dart' as data;
 
 class Robot {
   late String id;
@@ -6,6 +7,7 @@ class Robot {
   late String project;
   late Map<String, dynamic> phases;
   int percentage = 0;
+  bool hasPermissions = false;
 
   Robot(String i, String n, String p, Map<String, dynamic> ph) {
     id = i;
@@ -13,6 +15,7 @@ class Robot {
     project = p;
     phases = ph;
     calculateRobotPercentage();
+    if (data.grantedProjects.contains(p)) hasPermissions = true;
   }
 
   int getSectionPercentage(String phase, int index) {

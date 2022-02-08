@@ -57,7 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _fetchProjects() async {
-    List<Project> projects = await ProjectService().getGrantedProjects();
+    List<Project> projects = await ProjectService().getProjects();
     context.read<ProjectProvider>().setProjects(projects);
     setState(() {
       status = Status.retrieved;

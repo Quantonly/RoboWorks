@@ -40,6 +40,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
   }
 
   void showToast(text, color) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: color,

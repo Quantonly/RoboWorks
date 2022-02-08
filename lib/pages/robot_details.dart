@@ -247,6 +247,22 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
     );
   }
 
+  Widget hasEdit() {
+    if (!widget.robot.hasPermissions) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Text(''),
+      );
+    }
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8.0),
+      child: Icon(
+        Icons.edit,
+        color: Color.fromRGBO(223, 223, 223, 1),
+      ),
+    );
+  }
+
   phaseBuilder() {
     int index = 0;
     phases.sections.forEach((key, value) {
@@ -267,7 +283,8 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
         physics: const NeverScrollableScrollPhysics(),
         itemCount: sectionNames.length,
         itemBuilder: (context, index) {
-          int sectionPercentage = widget.robot.getSectionPercentage(phase, index);
+          int sectionPercentage =
+              widget.robot.getSectionPercentage(phase, index);
           Color titleColor = const Color.fromRGBO(223, 223, 223, 1);
           Color subtitleColor = const Color.fromRGBO(223, 223, 223, 0.7);
           if (sectionPercentage == 100) {
@@ -287,27 +304,34 @@ class _RobotDetailsPageState extends State<RobotDetailsPage> {
                 color: subtitleColor,
               ),
             ),
-            trailing: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Icon(
-                Icons.edit,
-                color: Color.fromRGBO(223, 223, 223, 1),
-              ),
-            ),
+            trailing: hasEdit(),
             onTap: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => ChangePercentageDialog(
-                  robot: widget.robot,
-                  phase: phase,
-                  sectionName: sectionNames[index],
-                  section: phases.sections[phase][index],
-                  value: sectionPercentage,
-                ),
-              ).then((value) {
-                widget.robot.calculateRobotPercentage();
-                setState(() {});
-              });
+              if (widget.robot.hasPermissions) {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) => ChangePercentageDialog(
+                    robot: widget.robot,
+                    phase: phase,
+                    sectionName: sectionNames[index],
+                    section: phases.sections[phase][index],
+                    value: sectionPercentage,
+                  ),
+                ).then((value) {
+                  widget.robot.calculateRobotPercentage();
+                  setState(() {});
+                });
+              } else {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text(
+                      'You have no permission in this project',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
             },
           );
         },

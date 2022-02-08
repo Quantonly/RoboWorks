@@ -39,6 +39,7 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   void showToast(text) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.red,
@@ -61,7 +62,6 @@ class _SignInPageState extends State<SignInPage> {
     if (result != null) {
       emailController.text = result;
       passwordController.clear();
-      //showToast('Password reset mail has been send');
     }
   }
 
