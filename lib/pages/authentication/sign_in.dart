@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:motion_toast/motion_toast.dart';
-import 'package:motion_toast/resources/arrays.dart';
 import 'package:page_transition/page_transition.dart';
 
 import 'package:provider/provider.dart';
@@ -34,44 +32,22 @@ class _SignInPageState extends State<SignInPage> {
           (res) => {
             if (res['error'] != null)
               {
-                showErrorToast(res['error']),
+                showToast(res['error']),
               },
           },
         );
   }
 
-  void showErrorToast(text) {
-    MotionToast.error(
-      title: const Text(
-        'Error',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+  void showToast(text) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.red,
+        content: Text(
+          text,
+          textAlign: TextAlign.center,
         ),
       ),
-      description: Text(text),
-      animationType: ANIMATION.fromTop,
-      position: MOTION_TOAST_POSITION.top,
-      width: 300,
-      toastDuration: const Duration(milliseconds: 2000),
-    ).show(context);
-    FocusScope.of(context).unfocus();
-  }
-
-  void showSuccessToast(text) {
-    MotionToast.success(
-      title: const Text(
-        'Success',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      description: Text(text),
-      animationType: ANIMATION.fromTop,
-      position: MOTION_TOAST_POSITION.top,
-      width: 300,
-      toastDuration: const Duration(milliseconds: 4000),
-    ).show(context);
-    FocusScope.of(context).unfocus();
+    );
   }
 
   void passwordReset() async {
@@ -85,7 +61,7 @@ class _SignInPageState extends State<SignInPage> {
     if (result != null) {
       emailController.text = result;
       passwordController.clear();
-      showSuccessToast('Password reset mail has been send');
+      //showToast('Password reset mail has been send');
     }
   }
 

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:motion_toast/motion_toast.dart';
-import 'package:motion_toast/resources/arrays.dart';
 
 import 'package:provider/provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -30,31 +28,27 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
           (res) => {
             if (res['error'] != null)
               {
-                showErrorToast(res['error']),
+                showToast(res['error'], Colors.red),
               },
             if (res['success'] != null)
               {
+                showToast(res['success'], Colors.green),
                 Navigator.pop(context, emailController.text.trim()),
               },
           },
         );
   }
 
-  void showErrorToast(text) {
-    MotionToast.error(
-      title: const Text(
-        'Error',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
+  void showToast(text, color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        content: Text(
+          text,
+          textAlign: TextAlign.center,
         ),
       ),
-      description: Text(text),
-      animationType: ANIMATION.fromTop,
-      position: MOTION_TOAST_POSITION.top,
-      width: 300,
-      toastDuration: const Duration(milliseconds: 2000),
-    ).show(context);
-    FocusScope.of(context).unfocus();
+    );
   }
 
   @override
