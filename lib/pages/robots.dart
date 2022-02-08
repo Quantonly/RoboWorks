@@ -257,6 +257,7 @@ class _RobotsPageState extends State<RobotsPage> {
                       context: context,
                       builder: (BuildContext context) => SortDialog(
                         dropDown: dropDown,
+                        provider: 'robots',
                       ),
                     );
                   },

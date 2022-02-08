@@ -236,6 +236,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       context: context,
                       builder: (BuildContext context) => SortDialog(
                         dropDown: dropDown,
+                        provider: 'projects',
                       ),
                     );
                   },

@@ -19,7 +19,6 @@ class ProjectProvider with ChangeNotifier {
   }
 
   void filterProjects(filter) {
-    print(filter);
     if (filter == "") {
       _filteredProjects = _projects;
     } else {
@@ -40,7 +39,7 @@ class ProjectProvider with ChangeNotifier {
       }
       break;
       case "Total robots": {
-        _filteredProjects.sort((a, b) => a.robotCount.compareTo(b.robotCount));
+        _filteredProjects.sort((a, b) => b.robotCount.compareTo(a.robotCount));
       }
       break;
     }

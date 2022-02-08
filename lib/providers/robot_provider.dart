@@ -39,7 +39,7 @@ class RobotProvider with ChangeNotifier {
       }
       break;
       case "Percentage": {
-        _filteredRobots.sort((a, b) => a.percentage.compareTo(b.percentage));
+        _filteredRobots.sort((a, b) => b.percentage.compareTo(a.percentage));
       }
       break;
     }
