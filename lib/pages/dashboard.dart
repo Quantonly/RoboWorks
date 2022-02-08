@@ -75,6 +75,41 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
       );
+    } else if (projects.isEmpty) {
+      return Expanded(
+        child: SizedBox(
+          child: RefreshIndicator(
+            onRefresh: _fetchUserData,
+            child: ScrollConfiguration(
+              behavior: NoGlowBehavior(),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: const [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Text(
+                            'Your account currently has no projects, please contact the administrator.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
     } else {
       return Expanded(
         child: SizedBox(
@@ -123,7 +158,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 ),
                               ),
                               subtitle: Text(
-                                "Total robots: " + project.robotCount.toString(),
+                                "Total robots: " +
+                                    project.robotCount.toString(),
                                 style: const TextStyle(
                                   color: Color.fromRGBO(223, 223, 223, 0.7),
                                 ),

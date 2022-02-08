@@ -11,13 +11,16 @@ class ProjectService {
 
   Future<List<Project>> getGrantedProjects() async {
     List<Project> projectList = [];
-    await Future.forEach(data.grantedProjects, (String projectId) async { 
-      Project response = await projects.doc(projectId).get().then((snapshot) {
-        Project project = Project.fromMap(snapshot.data() as Map<String, dynamic>, projectId);
-        return project;
+    if (data.grantedProjects.isNotEmpty) {
+      await Future.forEach(data.grantedProjects, (String projectId) async {
+        Project response = await projects.doc(projectId).get().then((snapshot) {
+          Project project = Project.fromMap(
+              snapshot.data() as Map<String, dynamic>, projectId);
+          return project;
+        });
+        projectList.add(response);
       });
-      projectList.add(response);
-    });
+    }
     return projectList;
   }
 }

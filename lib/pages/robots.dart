@@ -54,6 +54,41 @@ class _RobotsPageState extends State<RobotsPage> {
           ),
         ),
       );
+    } else if (robots.isEmpty) {
+      return Expanded(
+        child: SizedBox(
+          child: RefreshIndicator(
+            onRefresh: _fetchRobots,
+            child: ScrollConfiguration(
+              behavior: NoGlowBehavior(),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(
+                    parent: AlwaysScrollableScrollPhysics()),
+                itemCount: 1,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: const [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 32.0),
+                          child: Text(
+                            'There are currently no robots for this project, please contact the administrator.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
     } else {
       return Expanded(
         child: SizedBox(
