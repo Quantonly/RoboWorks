@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:robo_works/models/project.dart';
-import 'package:robo_works/services/database/project_service.dart';
 
 class ProjectProvider with ChangeNotifier {
   List<Project> _projects = [];
@@ -11,8 +10,7 @@ class ProjectProvider with ChangeNotifier {
   dynamic get projects => _projects;
   dynamic get filteredProjects => _filteredProjects;
 
-  void setProjects() async {
-    List<Project> projects = await ProjectService().getGrantedProjects();
+  void setProjects(List<Project> projects) async {
     _projects = projects;
     _filteredProjects = projects;
     sortProjects(currentSort);

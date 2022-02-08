@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:robo_works/services/database/project_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:robo_works/dialogs/sign_out_dialog.dart';
@@ -56,7 +57,8 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> _fetchProjects() async {
-    context.read<ProjectProvider>().setProjects();
+    List<Project> projects = await ProjectService().getGrantedProjects();
+    context.read<ProjectProvider>().setProjects(projects);
     setState(() {
       status = Status.retrieved;
     });

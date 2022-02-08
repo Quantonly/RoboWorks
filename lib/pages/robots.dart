@@ -9,6 +9,7 @@ import 'package:robo_works/models/robot.dart';
 import 'package:robo_works/pages/robot_details.dart';
 import 'package:robo_works/providers/robot_provider.dart';
 import 'package:robo_works/globals/style.dart' as style;
+import 'package:robo_works/services/database/robot_service.dart';
 
 enum Status { retrieving, retrieved }
 
@@ -39,7 +40,8 @@ class _RobotsPageState extends State<RobotsPage> {
   }
 
   Future<void> _fetchRobots() async {
-    context.read<RobotProvider>().setRobots(widget.project.id);
+    List<Robot> robots = await RobotService(projectId: widget.project.id).getRobots();
+    context.read<RobotProvider>().setRobots(widget.project.id, robots);
     setState(() {
       status = Status.retrieved;
     });

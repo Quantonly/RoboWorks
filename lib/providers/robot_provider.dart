@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:robo_works/models/robot.dart';
-import 'package:robo_works/services/database/robot_service.dart';
 
 class RobotProvider with ChangeNotifier {
   List<Robot> _robots = [];
@@ -11,8 +10,7 @@ class RobotProvider with ChangeNotifier {
   dynamic get robots => _robots;
   dynamic get filteredRobots => _filteredRobots;
 
-  void setRobots(String projectId) async {
-    List<Robot> robots = await RobotService(projectId: projectId).getRobots();
+  void setRobots(String projectId, List<Robot> robots) async {
     _robots = robots;
     _filteredRobots = robots;
     sortRobots(currentSort);
