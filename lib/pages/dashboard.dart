@@ -98,7 +98,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32.0),
                           child: Text(
-                            'Your account currently has no projects, please contact the administrator.',
+                            'No projects found',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 24),
                           ),

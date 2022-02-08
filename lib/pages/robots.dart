@@ -77,7 +77,7 @@ class _RobotsPageState extends State<RobotsPage> {
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 32.0),
                           child: Text(
-                            'There are currently no robots for this project, please contact the administrator.',
+                            'No robots found',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontSize: 24),
                           ),
