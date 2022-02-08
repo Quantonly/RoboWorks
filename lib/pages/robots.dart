@@ -26,10 +26,8 @@ class _RobotsPageState extends State<RobotsPage> {
   String sort = "Percentage ↑";
   int totalCompleted = 0;
   List<String> dropDown = <String>[
-    "Name ↓",
-    "Name ↑",
-    "Percentage ↓",
-    "Percentage ↑"
+    "Name",
+    "Percentage",
   ];
 
   @override

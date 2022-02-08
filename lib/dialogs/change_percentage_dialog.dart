@@ -24,10 +24,12 @@ class ChangePercentageDialog extends StatefulWidget {
 }
 
 class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
+  int initValue = 0;
   int percentage = 0;
 
   @override
   void initState() {
+    initValue = widget.value;
     percentage = widget.value;
     super.initState();
   }
@@ -68,7 +70,7 @@ class _ChangePercentageDialogState extends State<ChangePercentageDialog> {
           onPressed: () {
             Navigator.of(context).pop();
             RobotService(projectId: widget.robot.project).setSectionPercentage(
-                widget.robot.id, widget.phase, widget.section, percentage);
+                widget.robot, widget.phase, widget.section, percentage, initValue);
             widget.robot.phases[widget.phase][widget.section] = percentage;
           },
         ),

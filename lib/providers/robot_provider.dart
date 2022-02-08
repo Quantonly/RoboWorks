@@ -6,7 +6,7 @@ class RobotProvider with ChangeNotifier {
   List<Robot> _robots = [];
   List<Robot> _filteredRobots = [];
   String currentFilter = "";
-  String currentSort = "Percentage ↑";
+  String currentSort = "Name";
 
   dynamic get robots => _robots;
   dynamic get filteredRobots => _filteredRobots;
@@ -34,29 +34,14 @@ class RobotProvider with ChangeNotifier {
 
   void sortRobots(sort) {
     switch (sort) {
-      case "Name ↓": {
-        _filteredRobots.sort((a, b) => b.name.compareTo(a.name));
-      }
-      break;
-      case "Name ↑": {
+      case "Name": {
         _filteredRobots.sort((a, b) => a.name.compareTo(b.name));
       }
       break;
-      case "Percentage ↓": {
-        _filteredRobots.sort((a, b) => b.percentage.compareTo(a.percentage));
-      }
-      break;
-      case "Percentage ↑": {
+      case "Percentage": {
         _filteredRobots.sort((a, b) => a.percentage.compareTo(b.percentage));
       }
       break;
-      case "New-Old": {
-        //
-      }
-      break;
-      case "Old-New": {
-        //
-      }
     }
     currentSort = sort;
     notifyListeners();
