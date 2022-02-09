@@ -117,7 +117,7 @@ class _DashboardPageState extends State<DashboardPage> {
         child: SizedBox(
           height: 500,
           child: RefreshIndicator(
-            onRefresh: _fetchProjects,
+            onRefresh: _fetchUserData,
             child: ScrollConfiguration(
               behavior: NoGlowBehavior(),
               child: ListView.builder(
